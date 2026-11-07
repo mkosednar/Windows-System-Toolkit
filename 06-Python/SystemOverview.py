@@ -1,5 +1,5 @@
-"""Osnovni pregled računalnika Windows z uporabo samo standardne knjižnice Python.
-Ustvari besedilno poročilo v mapi Reports; ne spreminja sistemskih nastavitev.
+"""Basic Windows system overview using only the Python standard library.
+Creates a text report in the Reports directory; does not modify system settings.
 Združljivo s Python 3.9+.
 """
 from datetime import datetime
@@ -12,7 +12,7 @@ import ctypes
 
 
 def memory_info_gb():
-    """Vrne skupni in razpoložljivi RAM v GB v sistemu Windows."""
+    """Returns total and available Windows RAM in GB."""
     class MEMORYSTATUSEX(ctypes.Structure):
         _fields_ = [
             ("dwLength", ctypes.c_ulong),
@@ -37,32 +37,32 @@ def memory_info_gb():
 def main():
     now = datetime.now()
     lines = [
-        "WINDOWS SYSTEM TOOLKIT - SISTEMSKI PREGLED",
-        f"Datum in čas: {now:%d.%m.%Y %H:%M:%S}",
+        "WINDOWS SYSTEM TOOLKIT - SYSTEM OVERVIEW",
+        f"Date and time: {now:%d.%m.%Y %H:%M:%S}",
         "",
-        f"Računalnik: {platform.node()}",
-        f"Operacijski sistem: {platform.system()} {platform.release()}",
-        f"Različica sistema: {platform.version()}",
-        f"Arhitektura: {platform.machine()}",
-        f"Procesor: {platform.processor() or 'Podatek ni na voljo'}",
-        f"Logični procesorji: {os.cpu_count() or 'Podatek ni na voljo'}",
-        f"Omrežno ime: {socket.gethostname()}",
+        f"Computer: {platform.node()}",
+        f"Operating system: {platform.system()} {platform.release()}",
+        f"OS version: {platform.version()}",
+        f"Architecture: {platform.machine()}",
+        f"Procesor: {platform.processor() or 'Not available'}",
+        f"Logical processors: {os.cpu_count() or 'Podatek ni na voljo'}",
+        f"Network hostname: {socket.gethostname()}",
     ]
 
     ram = memory_info_gb() if os.name == "nt" else None
     lines.append("")
-    lines.append("POMNILNIK")
+    lines.append("MEMORY")
     if ram:
         total, available, load = ram
         lines += [
-            f"Skupni RAM: {total:.2f} GB",
-            f"Razpoložljivi RAM: {available:.2f} GB",
-            f"Obremenitev RAM: {load} %",
+            f"Total RAM: {total:.2f} GB",
+            f"Available RAM: {available:.2f} GB",
+            f"RAM usage: {load} %",
         ]
     else:
-        lines.append("Podatki o RAM-u niso na voljo.")
+        lines.append("RAM information is unavailable.")
 
-    lines += ["", "PROSTOR NA DISKIH"]
+    lines += ["", "DISK SPACE"]
     for letter in "ABCDEFGHIJKLMNOPQRSTUVWXYZ":
         root = f"{letter}:\\"
         if os.path.exists(root):
@@ -74,15 +74,15 @@ def main():
                     f"Prosto: {usage.free / gb:.1f} GB"
                 )
             except OSError:
-                lines.append(f"{root} Podatkov ni mogoče prebrati.")
+                lines.append(f"{root} Unable to read disk information.")
 
     report_dir = Path(__file__).resolve().parents[1] / "Reports"
     report_dir.mkdir(parents=True, exist_ok=True)
-    report_file = report_dir / f"Sistemski-pregled_{now:%Y%m%d_%H%M%S}.txt"
+    report_file = report_dir / f"System-Overview_{now:%Y%m%d_%H%M%S}.txt"
     report_file.write_text("\n".join(lines), encoding="utf-8")
 
     print("\n".join(lines))
-    print(f"\nPoročilo je shranjeno: {report_file}")
+    print(f"\nReport saved to: {report_file}")
 
 
 if __name__ == "__main__":
