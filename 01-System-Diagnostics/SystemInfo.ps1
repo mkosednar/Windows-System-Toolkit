@@ -1,26 +1,26 @@
 <#
 .SYNOPSIS
-    Prikaže osnovne informacije o računalniku in sistemu Windows.
+    Displays basic information about the computer and Windows operating system.
 .DESCRIPTION
-    Prebere ime računalnika, različico sistema, čas zagona in količino pomnilnika.
+    Reads the computer name, operating system version, boot time, and memory information.
 .NOTES
-    Skripta je pripravljena za ta projekt. Windows 10/11, PowerShell 5.1.
+    Created for this project. Windows 10/11, PowerShell 5.1.
 #>
 $ErrorActionPreference = 'Stop'
 try {
     $os = Get-CimInstance Win32_OperatingSystem
     $cs = Get-CimInstance Win32_ComputerSystem
     [pscustomobject]@{
-        Racunalnik = $env:COMPUTERNAME
-        Uporabnik = $env:USERNAME
-        OperacijskiSistem = $os.Caption
-        Razlicica = $os.Version
-        Arhitektura = $os.OSArchitecture
-        ZadnjiZagon = $os.LastBootUpTime
-        PomnilnikSkupajGB = [math]::Round($cs.TotalPhysicalMemory / 1GB, 2)
-        ProstiPomnilnikGB = [math]::Round($os.FreePhysicalMemory / 1MB, 2)
+        Computer = $env:COMPUTERNAME
+        User = $env:USERNAME
+        OperatingSystem = $os.Caption
+        Version = $os.Version
+        Architecture = $os.OSArchitecture
+        LastBoot = $os.LastBootUpTime
+        TotalMemoryGB = [math]::Round($cs.TotalPhysicalMemory / 1GB, 2)
+        FreeMemoryGB = [math]::Round($os.FreePhysicalMemory / 1MB, 2)
     } | Format-List
 } catch {
-    Write-Error "Pridobivanje sistemskih informacij ni uspelo: $($_.Exception.Message)"
+    Write-Error "Failed to retrieve system information: $($_.Exception.Message)"
     exit 1
 }
