@@ -1,30 +1,30 @@
 @echo off
 chcp 65001 >nul
 setlocal
-title Hitra omrežna diagnostika
+title Quick Network Diagnostics
 echo ==========================================
-echo       HITRA OMREŽNA DIAGNOSTIKA
+echo       QUICK NETWORK DIAGNOSTICS
 echo ==========================================
 echo.
-echo Konfiguracija omrežnih vmesnikov:
+echo Network adapter configuration:
 ipconfig
 echo.
-echo Preverjanje povezave z javnim naslovom:
+echo Testing connectivity to a public IP address:
 ping -n 4 1.1.1.1
 echo.
-echo Podrobne informacije shranim v lokalno poročilo.
+echo Saving detailed information to a local report.
 set "REPORTDIR=%~dp0..\..\Reports"
 if not exist "%REPORTDIR%" mkdir "%REPORTDIR%"
-set "REPORT=%REPORTDIR%\Omrezna-diagnostika_%DATE:/=-%_%TIME::=-%.txt"
+set "REPORT=%REPORTDIR%\Network-Diagnostics_%DATE:/=-%_%TIME::=-%.txt"
 set "REPORT=%REPORT: =_%"
 (
- echo Hitra omrezna diagnostika - %DATE% %TIME%
+ echo Quick network diagnostics - %DATE% %TIME%
  echo.
  ipconfig /all
  echo.
  route print
  echo.
 ) > "%REPORT%"
-echo Poročilo shranjeno: "%REPORT%"
-echo Opomba: ping na javni naslov lahko blokira omrežni pravilnik ali požarni zid.
+echo Report saved: "%REPORT%"
+echo Note: ping to a public IP address may be blocked by network policy or a firewall.
 pause
