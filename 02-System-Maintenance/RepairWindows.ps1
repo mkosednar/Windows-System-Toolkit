@@ -20,7 +20,7 @@ if (-not (Test-Administrator)) {
 
 $mapaPorocil = Join-Path $PSScriptRoot '..\Reports'
 New-Item -ItemType Directory -Path $mapaPorocil -Force | Out-Null
-$potDnevnika = Join-Path $mapaPorocil ("VzdrzevanjeSistema_{0}.log" -f (Get-Date -Format 'yyyyMMdd_HHmmss'))
+$potDnevnika = Join-Path $mapaPorocil ("Windows-Maintenance_{0}.log" -f (Get-Date -Format 'yyyyMMdd_HHmmss'))
 
 try {
     Start-Transcript -Path $potDnevnika -Append | Out-Null
@@ -76,7 +76,7 @@ function Invoke-DiskCheck {
         return
     }
 
-    [void](Invoke-WindowsCommand -Program 'chkdsk.exe' -Arguments @("${crka}:",'/scan') -Description "Spletni pregled datotečnega sistema na disku ${crka}:")
+    [void](Invoke-WindowsCommand -Program 'chkdsk.exe' -Arguments @("${crka}:",'/scan') -Description "Online file system scan on drive ${crka}:")
 }
 
 function Invoke-FullProcedure {
@@ -105,7 +105,7 @@ function Show-Menu {
     Write-Host "2. Quick Windows image check (DISM)"
     Write-Host "3. Detailed Windows image scan (DISM)"
     Write-Host "4. Repair Windows image (DISM)"
-    Write-Host "5. Pregled in popravilo sistemskih datotek (SFC)"
+    Write-Host "5. Verify and repair system files (SFC)"
     Write-Host "6. Disk check (CHKDSK)"
     Write-Host "0. Izhod"
     Write-Host ""
