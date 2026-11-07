@@ -44,8 +44,8 @@ def main():
         f"Operating system: {platform.system()} {platform.release()}",
         f"OS version: {platform.version()}",
         f"Architecture: {platform.machine()}",
-        f"Procesor: {platform.processor() or 'Not available'}",
-        f"Logical processors: {os.cpu_count() or 'Podatek ni na voljo'}",
+        f"Processor: {platform.processor() or 'Not available'}",
+        f"Logical processors: {os.cpu_count() or 'Not available'}",
         f"Network hostname: {socket.gethostname()}",
     ]
 
@@ -70,8 +70,8 @@ def main():
                 usage = shutil.disk_usage(root)
                 gb = 1024 ** 3
                 lines.append(
-                    f"{root} Skupaj: {usage.total / gb:.1f} GB | "
-                    f"Prosto: {usage.free / gb:.1f} GB"
+                    f"{root} Total: {usage.total / gb:.1f} GB | "
+                    f"Free: {usage.free / gb:.1f} GB"
                 )
             except OSError:
                 lines.append(f"{root} Unable to read disk information.")
