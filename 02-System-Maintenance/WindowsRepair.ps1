@@ -24,7 +24,7 @@ if (-not (Test-Administrator)) {
     exit 1
 }
 
-$reportDir = Join-Path $PSScriptRoot '..\..\Reports'
+$reportDir = Join-Path $PSScriptRoot '..\Reports'
 New-Item -ItemType Directory -Path $reportDir -Force | Out-Null
 $logFile = Join-Path $reportDir ("WindowsRepair_{0}.log" -f (Get-Date -Format 'yyyyMMdd_HHmmss'))
 
