@@ -1,13 +1,13 @@
 <#
 .SYNOPSIS
-    Prikaže procese z največjo porabo delovnega pomnilnika.
+    Displays the processes using the most working memory.
 .PARAMETER Top
-    Število procesov za prikaz (privzeto 20).
+    Number of processes to display (default: 20).
 .NOTES
-    Skripta samo bere podatke in ne ustavlja procesov.
+    This script only reads process information and does not stop processes.
 #>
 param([ValidateRange(1,200)][int]$Top = 20)
 Get-Process -ErrorAction SilentlyContinue |
     Sort-Object WorkingSet64 -Descending |
-    Select-Object -First $Top Name, Id, @{N='PomnilnikMB';E={[math]::Round($_.WorkingSet64 / 1MB, 1)}}, CPU |
+    Select-Object -First $Top Name, Id, @{N='MemoryMB';E={[math]::Round($_.WorkingSet64 / 1MB, 1)}}, CPU |
     Format-Table -AutoSize
