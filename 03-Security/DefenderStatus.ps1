@@ -1,20 +1,20 @@
 <#
 .SYNOPSIS
-    Prikaže osnovno stanje Microsoft Defender Antivirus.
+    Displays the basic status of Microsoft Defender Antivirus.
 .DESCRIPTION
-    Skripta samo bere varnostne nastavitve; ničesar ne spreminja.
+    Reads security settings only; makes no changes.
 #>
 try {
     $s = Get-MpComputerStatus -ErrorAction Stop
     [pscustomobject]@{
-        AntivirusAktiven=$s.AntivirusEnabled
-        ZascitaVRealnemCasu=$s.RealTimeProtectionEnabled
-        ZascitaPredVohunskoProgramskoOpremo=$s.AntispywareEnabled
-        RazlicicaPodpisov=$s.AntivirusSignatureVersion
-        ZadnjaPosodobitevPodpisov=$s.AntivirusSignatureLastUpdated
-        ZadnjiHiterPregled=$s.QuickScanEndTime
-        ZadnjiCelotenPregled=$s.FullScanEndTime
+        AntivirusEnabled=$s.AntivirusEnabled
+        RealTimeProtection=$s.RealTimeProtectionEnabled
+        AntispywareEnabled=$s.AntispywareEnabled
+        SignatureVersion=$s.AntivirusSignatureVersion
+        SignatureLastUpdated=$s.AntivirusSignatureLastUpdated
+        LastQuickScan=$s.QuickScanEndTime
+        LastFullScan=$s.FullScanEndTime
     } | Format-List
 } catch {
-    Write-Warning "Stanja Defenderja ni mogoče prebrati: $($_.Exception.Message)"
+    Write-Warning "Could not read Defender status: $($_.Exception.Message)"
 }
