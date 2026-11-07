@@ -1,7 +1,7 @@
 # Auto detect text files and perform LF normalization
 * text=auto
 
-# Language detection
-*.ps1 linguist-language=PowerShell
-*.bat linguist-language=Batchfile
-*.py linguist-language=Python
+# Language detection and GitHub language statistics
+*.ps1 linguist-language=PowerShell linguist-detectable
+*.bat linguist-language=Batchfile linguist-detectable
+*.py linguist-language=Python linguist-detectable
