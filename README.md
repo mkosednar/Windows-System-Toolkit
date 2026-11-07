@@ -1,50 +1,57 @@
 # Windows System Toolkit
 
-Zbirka izvirnih skript PowerShell za diagnostiko, vzdrževanje in osnovno upravljanje sistema Windows 10 in Windows 11.
+A collection of original PowerShell, Batch, and Python tools for diagnosing, maintaining, and managing Windows 10 and Windows 11 systems.
 
-**Ločitev projektov:** Linux-specifična orodja se razvijajo v ločenem repozitoriju [Linux System Toolkit](https://github.com/mkosednar/Linux-System-Toolkit). Ta repozitorij ostaja osredotočen na Windows.
+**Project separation:** Linux-specific tools are developed in the separate [Linux System Toolkit](https://github.com/mkosednar/Linux-System-Toolkit) repository. This repository remains focused on Windows.
 
-## Zahteve
+## Requirements
 
-- Windows 10 ali Windows 11
+- Windows 10 or Windows 11
 - Windows PowerShell 5.1
-- Nekatere funkcije zahtevajo skrbniške pravice.
-- Skripte pregledujejo sistem ali izvajajo jasno označena opravila; pred uporabo preberi opis v posamezni datoteki.
+- Some features require administrator privileges.
+- Scripts inspect the system or perform clearly documented tasks. Review each file before use.
 
-## Struktura projekta
+## Project structure
 
 ### 01 – System Diagnostics
-- `SystemInfo.ps1` – osnovne informacije o sistemu Windows.
-- `HardwareInfo.ps1` – pregled strojne opreme.
-- `RunningProcesses.ps1` – seznam trenutno delujočih procesov.
-- `StartupPrograms.ps1` – pregled programov, ki se zaženejo ob prijavi.
-- `DiskHealth.ps1` – stanje fizičnih diskov in prosti prostor na pogonih.
-- `InstalledSoftware.ps1` – seznam nameščenih programov z različicami in založniki.
-- `BatteryHealth.ps1` – ustvari poročilo o bateriji prenosnika.
-- `EventLogReport.ps1` – pregled kritičnih dogodkov in napak v dnevniku System.
+- `SystemInfo.ps1` – basic Windows system information.
+- `HardwareInfo.ps1` – hardware overview.
+- `RunningProcesses.ps1` – list of currently running processes.
+- `StartupPrograms.ps1` – review of programs configured to run at sign-in.
+- `DiskHealth.ps1` – physical disk health and available drive space.
+- `InstalledSoftware.ps1` – list of installed applications, versions, and publishers.
+- `BatteryHealth.ps1` – generates a laptop battery report.
+- `EventLogReport.ps1` – review of critical events and errors in the System event log.
 
 ### 02 – System Maintenance
-- `CleanTemp.ps1` – predogled začasnih datotek; brisanje je izrecno potrjeno z dodatnim parametrom in vnosom.
-- `RepairWindows.ps1` – DISM, SFC in CHKDSK diagnostični/popravni postopki; zahteva skrbniške pravice.
+- `CleanTemp.ps1` – previews temporary files; deletion requires an explicit parameter and confirmation.
+- `RepairWindows.ps1` – DISM, SFC, and CHKDSK diagnostic and repair procedures; administrator privileges are required.
 
 ### 03 – Security
-- `DefenderStatus.ps1` – pregled stanja Microsoft Defender.
+- `DefenderStatus.ps1` – Microsoft Defender status overview.
 
 ### 04 – Network
-- `NetworkInfo.ps1` – osnovne informacije o omrežnih nastavitvah.
+- `NetworkInfo.ps1` – basic network configuration information.
 
-## Varnostna priporočila
+### 05 – Utilities
+- `ToolkitMenu.bat` – menu for launching selected toolkit scripts.
+- `QuickNetworkCheck.bat` – quick network diagnostics and a local report.
 
-- Pred uporabo orodij za popravilo naredi varnostno kopijo pomembnih podatkov.
-- Skripte najprej preglej in jih preizkusi v neprodukcijskem okolju.
-- Ne zaženi neznanih skript s skrbniškimi pravicami.
-- Poročila v mapi `Reports` lahko vsebujejo podatke o tvojem računalniku; mapa je namenjena lokalnim poročilom in ni del objavljenih datotek.
-- Rezultati nekaterih diagnostičnih ukazov so odvisni od strojne opreme, gonilnikov in različice sistema Windows.
+### 06 – Python
+- `SystemOverview.py` – basic system overview using the Python standard library.
 
-## Jezik
+## Safety recommendations
 
-Komentarji in uporabniški izpisi so praviloma v slovenščini. Imena datotek in tehničnih ukazov ostajajo v angleščini zaradi lažje uporabe in vzdrževanja.
+- Back up important data before using repair tools.
+- Review scripts and test them in a non-production environment before use.
+- Do not run unfamiliar scripts with administrator privileges.
+- Reports in the `Reports` directory may contain information about your computer. This directory is intended for local reports and is not part of the published repository files.
+- Some diagnostic results depend on hardware, drivers, and the Windows version.
 
-## Licenca
+## Language
 
-Projekt trenutno nima izbrane odprtokodne licence. Do njene določitve uporaba, spreminjanje in nadaljnja distribucija niso samodejno dovoljena.
+Documentation, code comments, and user-facing messages are maintained in English. File names and technical command names are also kept in English for consistency.
+
+## License
+
+No open-source license has been selected for this project yet. Until a license is added, use, modification, and redistribution are not automatically permitted.
