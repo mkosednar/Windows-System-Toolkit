@@ -2,6 +2,8 @@
 
 Zbirka izvirnih skript PowerShell za diagnostiko, vzdrževanje in osnovno upravljanje sistema Windows 10 in Windows 11.
 
+**Ločitev projektov:** Linux-specifična orodja se razvijajo v ločenem repozitoriju [Linux System Toolkit](https://github.com/mkosednar/Linux-System-Toolkit). Ta repozitorij ostaja osredotočen na Windows.
+
 ## Zahteve
 
 - Windows 10 ali Windows 11
@@ -23,22 +25,13 @@ Zbirka izvirnih skript PowerShell za diagnostiko, vzdrževanje in osnovno upravl
 
 ### 02 – System Maintenance
 - `CleanTemp.ps1` – predogled začasnih datotek; brisanje je izrecno potrjeno z dodatnim parametrom in vnosom.
+- `RepairWindows.ps1` – DISM, SFC in CHKDSK diagnostični/popravni postopki; zahteva skrbniške pravice.
 
 ### 03 – Security
 - `DefenderStatus.ps1` – pregled stanja Microsoft Defender.
 
 ### 04 – Network
 - `NetworkInfo.ps1` – osnovne informacije o omrežnih nastavitvah.
-
-## Orodje za popravilo sistema
-
-- `02-System-Maintenance/RepairWindows.ps1` – meni za DISM CheckHealth, ScanHealth in RestoreHealth, SFC /scannow ter CHKDSK /scan. Zahteva skrbniške pravice in zapisuje dnevnik v mapo `Reports`.
-
-Za zagon odpri PowerShell kot skrbnik, pomakni se v mapo skripte in zaženi:
-
-```powershell
-.\RepairWindows.ps1
-```
 
 ## Varnostna priporočila
 
