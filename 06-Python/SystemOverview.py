@@ -1,6 +1,6 @@
 """Basic Windows system overview using only the Python standard library.
 Creates a text report in the Reports directory; does not modify system settings.
-Združljivo s Python 3.9+.
+Compatible with Python 3.9+.
 """
 from datetime import datetime
 from pathlib import Path
