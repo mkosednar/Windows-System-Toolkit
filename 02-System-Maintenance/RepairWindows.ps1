@@ -1,20 +1,20 @@
 # Windows System Toolkit - diagnostika in popravilo sistema
-# Avtorska izvedba za Windows 10/11 in Windows PowerShell 5.1.
+# Original implementation for Windows 10/11 and Windows PowerShell 5.1.
 # Uporablja vgrajena orodja DISM, SFC in CHKDSK.
-# Skripta ne izvaja samodejnega ponovnega zagona sistema.
+# This script does not automatically restart the system.
 
 $ErrorActionPreference = 'Stop'
 
-function Test-Skrbnik {
+function Test-Administrator {
     $identiteta = [Security.Principal.WindowsIdentity]::GetCurrent()
     $principal = New-Object Security.Principal.WindowsPrincipal($identiteta)
     return $principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
 }
 
-if (-not (Test-Skrbnik)) {
-    Write-Host "Za to orodje so potrebne skrbniške pravice." -ForegroundColor Yellow
-    Write-Host "Zapri okno, nato PowerShell zaženi z možnostjo 'Zaženi kot skrbnik' in ponovno zaženi skripto."
-    Read-Host "Pritisni Enter za izhod"
+if (-not (Test-Administrator)) {
+    Write-Host "Administrator privileges are required for this tool." -ForegroundColor Yellow
+    Write-Host "Close this window, start PowerShell using 'Run as administrator', and run the script again."
+    Read-Host "Press Enter to exit"
     return
 }
 
@@ -25,111 +25,111 @@ $potDnevnika = Join-Path $mapaPorocil ("VzdrzevanjeSistema_{0}.log" -f (Get-Date
 try {
     Start-Transcript -Path $potDnevnika -Append | Out-Null
 } catch {
-    Write-Warning "Dnevnika ni bilo mogoče ustvariti. Nadaljujem brez snemanja seje."
+    Write-Warning "Could not create the log file. Continuing without session logging."
 }
 
-function Invoke-UkazWindows {
+function Invoke-WindowsCommand {
     param(
         [Parameter(Mandatory=$true)][string]$Program,
-        [Parameter(Mandatory=$true)][string[]]$Argumenti,
-        [Parameter(Mandatory=$true)][string]$Opis
+        [Parameter(Mandatory=$true)][string[]]$Arguments,
+        [Parameter(Mandatory=$true)][string]$Description
     )
 
     Write-Host ""
-    Write-Host ">>> $Opis" -ForegroundColor Cyan
-    Write-Host "$Program $($Argumenti -join ' ')" -ForegroundColor DarkGray
+    Write-Host ">>> $Description" -ForegroundColor Cyan
+    Write-Host "$Program $($Arguments -join ' ')" -ForegroundColor DarkGray
 
-    & $Program @Argumenti
+    & $Program @Arguments
     $koda = $LASTEXITCODE
 
     if ($koda -eq 0) {
-        Write-Host "Ukaz je uspešno zaključen." -ForegroundColor Green
+        Write-Host "Command completed successfully." -ForegroundColor Green
     } else {
-        Write-Warning "Ukaz se je zaključil s kodo $koda. Preveri izpis in dnevnik."
+        Write-Warning "Command exited with code $koda. Review the output and log."
     }
 
     return $koda
 }
 
-function Invoke-DismPregled {
-    [void](Invoke-UkazWindows -Program 'DISM.exe' -Argumenti @('/Online','/Cleanup-Image','/CheckHealth') -Opis 'Hiter pregled Windows slike (DISM CheckHealth)')
+function Invoke-DismCheck {
+    [void](Invoke-WindowsCommand -Program 'DISM.exe' -Arguments @('/Online','/Cleanup-Image','/CheckHealth') -Description 'Quick Windows image check (DISM CheckHealth)')
 }
 
-function Invoke-DismPoglobljeno {
-    [void](Invoke-UkazWindows -Program 'DISM.exe' -Argumenti @('/Online','/Cleanup-Image','/ScanHealth') -Opis 'Poglobljen pregled Windows slike (DISM ScanHealth)')
+function Invoke-DismScan {
+    [void](Invoke-WindowsCommand -Program 'DISM.exe' -Arguments @('/Online','/Cleanup-Image','/ScanHealth') -Description 'Detailed Windows image scan (DISM ScanHealth)')
 }
 
-function Invoke-DismPopravilo {
-    [void](Invoke-UkazWindows -Program 'DISM.exe' -Argumenti @('/Online','/Cleanup-Image','/RestoreHealth') -Opis 'Popravilo Windows slike (DISM RestoreHealth)')
+function Invoke-DismRepair {
+    [void](Invoke-WindowsCommand -Program 'DISM.exe' -Arguments @('/Online','/Cleanup-Image','/RestoreHealth') -Description 'Repair Windows image (DISM RestoreHealth)')
 }
 
-function Invoke-SfcPopravilo {
-    [void](Invoke-UkazWindows -Program 'sfc.exe' -Argumenti @('/scannow') -Opis 'Preverjanje in popravilo zaščitenih sistemskih datotek (SFC)')
+function Invoke-SfcRepair {
+    [void](Invoke-WindowsCommand -Program 'sfc.exe' -Arguments @('/scannow') -Description 'Verify and repair protected system files (SFC)')
 }
 
-function Invoke-PregledDiska {
-    $crka = Read-Host "Vnesi črko diska za pregled (npr. C)"
+function Invoke-DiskCheck {
+    $crka = Read-Host "Enter the drive letter to scan (e.g. C)"
     $crka = $crka.Trim().TrimEnd(':').ToUpperInvariant()
 
     if ($crka -notmatch '^[A-Z]$') {
-        Write-Warning "Vnos ni veljavna črka pogona. Pregled diska je preskočen."
+        Write-Warning "The input is not a valid drive letter. Disk scan skipped."
         return
     }
 
-    [void](Invoke-UkazWindows -Program 'chkdsk.exe' -Argumenti @("${crka}:",'/scan') -Opis "Spletni pregled datotečnega sistema na disku ${crka}:")
+    [void](Invoke-WindowsCommand -Program 'chkdsk.exe' -Arguments @("${crka}:",'/scan') -Description "Spletni pregled datotečnega sistema na disku ${crka}:")
 }
 
-function Invoke-CelotenPostopek {
+function Invoke-FullProcedure {
     Write-Host ""
-    Write-Host "Začenjam priporočeni postopek vzdrževanja." -ForegroundColor Yellow
-    Write-Host "DISM lahko za dokončanje potrebuje internetno povezavo."
-    Write-Host "Postopek lahko traja precej časa; okna ne zapiraj."
+    Write-Host "Starting the recommended maintenance procedure." -ForegroundColor Yellow
+    Write-Host "DISM may require an internet connection to complete."
+    Write-Host "This procedure may take some time; do not close this window."
 
-    Invoke-DismPregled
-    Invoke-DismPoglobljeno
-    Invoke-DismPopravilo
-    Invoke-SfcPopravilo
-    Invoke-PregledDiska
+    Invoke-DismCheck
+    Invoke-DismScan
+    Invoke-DismRepair
+    Invoke-SfcRepair
+    Invoke-DiskCheck
 
     Write-Host ""
-    Write-Host "Izbrani postopek je končan. Preglej rezultate zgoraj in dnevnik." -ForegroundColor Green
+    Write-Host "The selected procedure is complete. Review the results above and the log." -ForegroundColor Green
 }
 
-function Show-Meni {
+function Show-Menu {
     Clear-Host
     Write-Host "===============================================" -ForegroundColor Cyan
     Write-Host "       WINDOWS SYSTEM TOOLKIT" -ForegroundColor Cyan
-    Write-Host "       Diagnostika in popravilo sistema"
+    Write-Host "       System diagnostics and repair"
     Write-Host "===============================================" -ForegroundColor Cyan
-    Write-Host "1. Celoten postopek diagnostike in popravila"
-    Write-Host "2. Hiter pregled Windows slike (DISM)"
-    Write-Host "3. Poglobljen pregled Windows slike (DISM)"
-    Write-Host "4. Popravilo Windows slike (DISM)"
+    Write-Host "1. Full diagnostics and repair procedure"
+    Write-Host "2. Quick Windows image check (DISM)"
+    Write-Host "3. Detailed Windows image scan (DISM)"
+    Write-Host "4. Repair Windows image (DISM)"
     Write-Host "5. Pregled in popravilo sistemskih datotek (SFC)"
-    Write-Host "6. Pregled diska (CHKDSK)"
+    Write-Host "6. Disk check (CHKDSK)"
     Write-Host "0. Izhod"
     Write-Host ""
-    Write-Host "Dnevnik seje: $potDnevnika" -ForegroundColor DarkGray
+    Write-Host "Session log: $potDnevnika" -ForegroundColor DarkGray
 }
 
 try {
     do {
-        Show-Meni
-        $izbira = Read-Host "Izberi opravilo (0-6)"
+        Show-Menu
+        $izbira = Read-Host "Select a task (0-6)"
 
         switch ($izbira) {
-            '1' { Invoke-CelotenPostopek; Read-Host "Pritisni Enter za nadaljevanje" | Out-Null }
-            '2' { Invoke-DismPregled; Read-Host "Pritisni Enter za nadaljevanje" | Out-Null }
-            '3' { Invoke-DismPoglobljeno; Read-Host "Pritisni Enter za nadaljevanje" | Out-Null }
-            '4' { Invoke-DismPopravilo; Read-Host "Pritisni Enter za nadaljevanje" | Out-Null }
-            '5' { Invoke-SfcPopravilo; Read-Host "Pritisni Enter za nadaljevanje" | Out-Null }
-            '6' { Invoke-PregledDiska; Read-Host "Pritisni Enter za nadaljevanje" | Out-Null }
-            '0' { Write-Host "Zaključujem orodje." -ForegroundColor Green }
-            default { Write-Warning "Neveljavna izbira."; Start-Sleep -Seconds 2 }
+            '1' { Invoke-FullProcedure; Read-Host "Press Enter to continue" | Out-Null }
+            '2' { Invoke-DismCheck; Read-Host "Press Enter to continue" | Out-Null }
+            '3' { Invoke-DismScan; Read-Host "Press Enter to continue" | Out-Null }
+            '4' { Invoke-DismRepair; Read-Host "Press Enter to continue" | Out-Null }
+            '5' { Invoke-SfcRepair; Read-Host "Press Enter to continue" | Out-Null }
+            '6' { Invoke-DiskCheck; Read-Host "Press Enter to continue" | Out-Null }
+            '0' { Write-Host "Exiting the tool." -ForegroundColor Green }
+            default { Write-Warning "Invalid selection."; Start-Sleep -Seconds 2 }
         }
     } while ($izbira -ne '0')
 }
 finally {
     try { Stop-Transcript | Out-Null } catch {}
-    Write-Host "Dnevnik: $potDnevnika" -ForegroundColor DarkGray
+    Write-Host "Log: $potDnevnika" -ForegroundColor DarkGray
 }
