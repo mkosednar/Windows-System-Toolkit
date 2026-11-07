@@ -1,10 +1,10 @@
 <#
 .SYNOPSIS
-    Prikaže omrežne vmesnike, IP-naslove in privzete prehode.
+    Displays network adapters, IP addresses, and default gateways.
 .DESCRIPTION
-    Skripta ne spreminja omrežnih nastavitev.
+    Does not modify network settings.
 #>
-Write-Host '=== OMREZNI VMESNIKI ===' -ForegroundColor Cyan
+Write-Host '=== NETWORK ADAPTERS ===' -ForegroundColor Cyan
 Get-NetAdapter -ErrorAction SilentlyContinue | Select-Object Name,InterfaceDescription,Status,LinkSpeed,MacAddress | Format-Table -AutoSize
-Write-Host "`n=== IP-NASLOVI ===" -ForegroundColor Cyan
+Write-Host "`n=== IP ADDRESSES ===" -ForegroundColor Cyan
 Get-NetIPConfiguration -ErrorAction SilentlyContinue | Select-Object InterfaceAlias,IPv4Address,IPv4DefaultGateway,DNSServer | Format-List
