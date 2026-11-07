@@ -1,6 +1,6 @@
-# Windows System Toolkit - diagnostika in popravilo sistema
+# Windows System Toolkit - system diagnostics and repair
 # Original implementation for Windows 10/11 and Windows PowerShell 5.1.
-# Uporablja vgrajena orodja DISM, SFC in CHKDSK.
+# Uses the built-in DISM, SFC, and CHKDSK tools.
 # This script does not automatically restart the system.
 
 $ErrorActionPreference = 'Stop'
@@ -107,7 +107,7 @@ function Show-Menu {
     Write-Host "4. Repair Windows image (DISM)"
     Write-Host "5. Verify and repair system files (SFC)"
     Write-Host "6. Disk check (CHKDSK)"
-    Write-Host "0. Izhod"
+    Write-Host "0. Exit"
     Write-Host ""
     Write-Host "Session log: $potDnevnika" -ForegroundColor DarkGray
 }
