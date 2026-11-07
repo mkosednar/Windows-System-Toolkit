@@ -1,17 +1,17 @@
-# Pregled kritičnih dogodkov in napak v dnevniku System.
-# Privzeto zadnjih 7 dni; dnevnikov ne spreminja.
-param([ValidateRange(1,90)][int]$Dni = 7)
+# Reviews critical events and errors in the System event log.
+# Defaults to the last 7 days; does not modify event logs.
+param([ValidateRange(1,90)][int]$Days = 7)
 $ErrorActionPreference = 'Stop'
 try {
- $from = (Get-Date).AddDays(-$Dni)
+ $from = (Get-Date).AddDays(-$Days)
  $events = Get-WinEvent -FilterHashtable @{LogName='System';Level=1,2;StartTime=$from} -MaxEvents 200 -ErrorAction SilentlyContinue
- if (-not $events) { Write-Host "Dogodki niso bili najdeni." -ForegroundColor Green; return }
- $report = $events | Select-Object TimeCreated,@{N='Raven';E={if ($_.Level -eq 1) {'Kritično'} else {'Napaka'}}},ProviderName,Id,Message
+ if (-not $events) { Write-Host "No matching events were found." -ForegroundColor Green; return }
+ $report = $events | Select-Object TimeCreated,@{N='Level';E={if ($_.Level -eq 1) {'Critical'} else {'Error'}}},ProviderName,Id,Message
  $report | Format-List
- if ((Read-Host "Shranim poročilo v CSV? (D/N)") -match '^(D|DA|Y|YES)$') {
+ if ((Read-Host "Save the report as CSV? (Y/N)") -match '^(Y|YES)$') {
   $dir = Join-Path $PSScriptRoot '..\Reports'; New-Item -ItemType Directory -Path $dir -Force | Out-Null
-  $file = Join-Path $dir ("Napake-dnevnika_{0}.csv" -f (Get-Date -Format 'yyyyMMdd_HHmmss'))
+  $file = Join-Path $dir ("Event-Log-Errors_{0}.csv" -f (Get-Date -Format 'yyyyMMdd_HHmmss'))
   $report | Export-Csv $file -NoTypeInformation -Encoding UTF8
-  Write-Host "Shranjeno: $file" -ForegroundColor Green
+  Write-Host "Saved: $file" -ForegroundColor Green
  }
-} catch { Write-Error "Napaka pri pregledu dnevnika: $($_.Exception.Message)" }
+} catch { Write-Error "Event log review failed: $($_.Exception.Message)" }
