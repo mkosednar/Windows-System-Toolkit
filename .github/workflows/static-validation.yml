@@ -45,6 +45,6 @@ jobs:
         shell: pwsh
         run: |
           $batch = Get-Content "05-Utilities/QuickNetworkCheck.bat" -Raw
-          if ($batch -notmatch '(?m)^set "REPORTDIR=%~dp0\.\.\\Reports"\r? {) {
+          if ($batch -notmatch '(?m)^set "REPORTDIR=%~dp0\.\.\\Reports"\r?$') {
             throw "QuickNetworkCheck.bat report directory must resolve to repository-root Reports."
           }
