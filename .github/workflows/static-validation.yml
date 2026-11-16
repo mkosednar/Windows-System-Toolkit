@@ -32,6 +32,25 @@ jobs:
           if ($errors.Count) { $errors | Write-Error; exit 1 }
           Write-Host "Parsed $($files.Count) PowerShell files successfully."
 
+      - name: Validate Windows PowerShell 5.1 syntax
+        shell: powershell
+        run: |
+          $files = Get-ChildItem -Path . -Filter *.ps1 -Recurse -File
+          if (-not $files) { throw "No PowerShell scripts found." }
+          $errors = @()
+          foreach ($file in $files) {
+            $tokens = $null
+            $parseErrors = $null
+            [void][System.Management.Automation.Language.Parser]::ParseFile(
+              $file.FullName, [ref]$tokens, [ref]$parseErrors
+            )
+            foreach ($errorItem in $parseErrors) {
+              $errors += "$($file.FullName): $($errorItem.Message)"
+            }
+          }
+          if ($errors.Count) { $errors | Write-Error; exit 1 }
+          Write-Host "Parsed $($files.Count) PowerShell files with Windows PowerShell 5.1."
+
       - name: Compile Python scripts
         shell: pwsh
         run: |
